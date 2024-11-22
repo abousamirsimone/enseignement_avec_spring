@@ -24,6 +24,7 @@ public class UeController {
     @RequestMapping(value = "/ChefDepartement/supprimerUe",method = RequestMethod.POST)
     public String supprimer_Ue(UE ue) {
         ueService.supprimer(ue.getId());
+        //eytuu
         return "redirect:/ChefDepartement/Maquette/UE";
     }
 }
