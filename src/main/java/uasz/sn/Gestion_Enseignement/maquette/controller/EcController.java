@@ -3,10 +3,7 @@ package uasz.sn.Gestion_Enseignement.maquette.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import uasz.sn.Gestion_Enseignement.maquette.modele.EC;
 import uasz.sn.Gestion_Enseignement.maquette.modele.UE;
 import uasz.sn.Gestion_Enseignement.maquette.service.EcService;
@@ -65,7 +62,8 @@ public class EcController {
 
 
     @RequestMapping(value = "/ChefDepartement/supprimerEc/{id}",method = RequestMethod.POST)
-    public String supprimer_Ec( @PathVariable("id") Long id,Long idEc, @ModelAttribute EC ec, Model model){
+    public String supprimer_Ec( @PathVariable("id") Long id, @RequestParam("idEc") Long idEc,
+                                @ModelAttribute EC ec, Model model){
         UE ue = ueService.findOptionalById(id);
 
         if (ue != null) {
