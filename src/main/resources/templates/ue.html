@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template_maquette.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="custom-contentMaq" class="container">
+  <div class="tab-content">
+
+    <div id="tab_Ue" class="tab-pane fade in active">
+
+      <div class="row" style="padding-bottom: 10px; padding-top: 10px">
+        <div style="text-align: center">
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#form_Ajouter_Ue" >Ajouter Ue</button>
+        </div>
+      </div>
+
+      <!-- Debut popup ajouter un Permanent -->
+      <div data-dismiss="modal" style="margin-top:25px">
+        <div class="modal fade" id="form_Ajouter_Ue">
+          <div class="modal-dialog" >
+            <div class="modal-content panel-success" >
+              <!--modal Header-->
+              <div class="modal-header panel-heading" >
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title" style="text-align: center">Ajouter un UE</h4>
+              </div>
+              <!--modal Body-->
+              <form th:action="@{/ChefDepartement/ajouterUe}" method="post">
+                <div class="modal-body" >
+
+                  <div class="form-group">
+                    <label >Code</label>
+                    <input type="text" class="form-control" name="code" />
+                  </div>
+                  <div class="form-group">
+                    <label >Libelle</label>
+                    <input type="text" class="form-control" name="libelle"/>
+                  </div>
+                  <div class="form-group">
+                    <label >Credit</label>
+                    <input type="number" class="form-control" name="credit"/>
+                  </div>
+                  <div class="form-group">
+                    <label >Coefficient</label>
+                    <input type="number" class="form-control" name="coefficient" />
+                  </div>
+
+                </div>
+                <!--modal Footer-->
+                <div class="modal-footer" >
+                  <div class="row">
+                    <div class="col-lg-3  col-md-3 col-sm-3 col-xs-4">
+                      <button type="submit" class="btn btn-success">Ajouter</button>
+                    </div>
+                    <div class="col-lg-offset-5 col-lg-3 col-md-offset-5 col-md-3 col-sm-offset-5 col-sm-3 col-xs-8">
+                      <button type="submit" class="btn btn-default " data-dismiss="modal">Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Fin popup ajouter un Permanent -->
+
+      <!-- Debut lister tout les Permanents -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="table_Ue">
+          <thead>
+          <tr>
+            <th>Cde</th>
+            <th>Libelle</th>
+            <th>Credits</th>
+            <th>Coefficient</th>
+
+            <th>Operations</th>
+            <td> Details</td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="ue : ${ues}">
+            <td th:text="${ue.code}"></td>
+            <td th:text="${ue.libelle}"></td>
+            <td th:text="${ue.credits}"></td>
+            <td th:text="${ue.coefficient}"></td>
+
+            <td>
+              <button class="btn btn-info btn-xs" data-toggle="modal" th:attr="data-target='#form_Modifier_Ue'+${ue.id}" >
+                Modifier
+              </button>
+              <button class="btn btn-danger btn-xs" data-toggle="modal" th:attr="data-target='#form_Supprimer_Ue'+${ue.id}" >
+                Supprimer
+              </button>
+
+
+            </td>
+            <td>
+
+              <a th:href="@{/ChefDepartement/Maquette/UE/voir/{id}(id=${ue.id})}" class="btn btn-info btn-xs">
+                <span>voir</span>
+              </a>
+
+
+            </td>
+
+
+                <!---Debut popup modifier un Permanent --->
+            <div data-dismiss="modal">
+              <div class="modal fade" th:attr="id='form_Modifier_Ue'+${ue.id}" >
+                <div class="modal-dialog" >
+                  <div class="modal-content panel-info" >
+                    <!--- modal Header //////////////////////////--->
+                    <div class="modal-header panel-heading" >
+                      <button type="button" class="close" data-dismiss="modal">x</button>
+                      <h4 class="modal-title" style="text-align: center">Modifier UE</h4>
+                    </div>
+                    <!--- modal Body //////////////////////--->
+                     <form th:action="@{/ChefDepartement/modifierUe}" method="post">
+                       <div class="modal-body" >
+                         <div style="display: none">
+                           <input name="id" th:value="${ue.id}" />
+                         </div>
+                         <div class="form-group">
+                           <label >Code</label>
+                           <input type="text" class="form-control" name="code" th:value="${ue.code}"/>
+                         </div>
+                         <div class="form-group">
+                           <label >Libelle</label>
+                           <input type="text" class="form-control" name="libelle" th:value="${ue.libelle}"/>
+                         </div>
+                         <div class="form-group">
+                           <label >Credit(s)</label>
+                           <input type="number" class="form-control" name="credits" th:value="${ue.credits}"/>
+                         </div>
+                         <div class="form-group">
+                           <label >Coefficient</label>
+                           <input type="number" class="form-control" name="coefficient" th:value="${ue.coefficient}"/>
+                         </div>
+
+                       </div>
+                       <!---  modal Footer ////////////////////--->
+                       <div class="modal-footer" >
+                         <div class="row">
+                           <div class="col-lg-3  col-md-3 col-sm-3 col-xs-4">
+                             <button type="submit" class="btn btn-info" >Modifier</button>
+                           </div>
+                           <div class="col-lg-offset-5 col-lg-3 col-md-offset-5 col-md-3 col-sm-offset-5 col-sm-3 col-xs-8">
+                             <button type="button" class="btn btn-default " data-dismiss="modal">Annuler</button>
+                           </div>
+                         </div>
+                       </div>
+                     </form>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             <!-- Fin popup modifier un ue //////////////////////////// -->
+
+           <!-- Debut popup supprier un ue ///////////////////////////////////-->
+            <div data-dismiss="modal">
+              <div class="modal fade" th:attr="id='form_Supprimer_Ue'+${ue.id}">
+                <div class="modal-dialog" >
+                  <div class="modal-content panel-danger" >
+                    <!--modal Header-->
+                    <div class="modal-header panel-heading" >
+                      <button type="button" class="close" data-dismiss="modal">x</button>
+                      <h4 class="modal-title" style="text-align: center">Supprimer UE</h4>
+                    </div>
+                    <!--modal Body-->
+                    <form th:action="@{/ChefDepartement/supprimerUe}" method="post">
+                      <div class="modal-body" >
+                        <div style="display: none">
+                          <input name="id" th:value="${ue.id}" />
+                        </div>
+                        <div class="form-group">
+                          <label >Cde</label> :
+                          <span th:text="${ue.code}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >Libelle</label> :
+                          <span th:text="${ue.libelle}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >Credits</label> :
+                          <span th:text="${ue.credits}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >Coefficient</label> :
+                          <span th:text="${ue.coefficient}"/> </span>
+                        </div>
+
+
+                      </div>
+                      <!--modal Footer-->
+                      <div class="modal-footer" >
+                        <div class="row">
+                          <div class="col-lg-3  col-md-3 col-sm-3 col-xs-4">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                          </div>
+                          <div class="col-lg-offset-5 col-lg-3 col-md-offset-5 col-md-3 col-sm-offset-5 col-sm-3 col-xs-8">
+                            <button type="button" class="btn btn-default " data-dismiss="modal">Annuler</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Fin popup supprier un Ue ///////////////////////////////////////////////////////-->
+
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Fin lister tout les Permanents -->
+
+      <!-- Debut Datatable lister Permanents -->
+      <script>
+        $(document).ready(function() {
+          $("#table_Ue").DataTable({
+
+          });
+        })
+      </script>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

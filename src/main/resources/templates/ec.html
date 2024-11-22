@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template_maquette.html">
+<head>
+  <meta charset="UTF-8">
+  <title>ec</title>
+</head>
+<body>
+<div layout:fragment="custom-contentMaq" class="container">
+  <div class="tab-content">
+
+    <div id="tab_Ec" class="tab-pane fade in active">
+
+      <div class="row" style="padding-bottom: 10px; padding-top: 10px">
+        <div style="text-align: center">
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#form_Ajouter_Ec" >Ajouter EC</button>
+        </div>
+      </div>
+      <h3 style="text-align: center;">La liste des EC de l'UE</h3>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div th:each="ues : ${ues}" th:if="${ues.id==ue.id}">
+          <span th:text="${ues.code}"></span><br/>
+          <span th:text="${ues.libelle}"></span>
+          <br/><br/> <!-- Espace entre chaque UE -->
+        </div>
+      </div>
+
+      <!-- Debut popup ajouter un Permanent -->
+      <div data-dismiss="modal" style="margin-top:25px">
+        <div class="modal fade" id="form_Ajouter_Ec">
+          <div class="modal-dialog" >
+            <div class="modal-content panel-success" >
+              <!--modal Header-->
+              <div class="modal-header panel-heading" >
+                <button type="button" class="close" data-dismiss="modal">x</button>
+                <h4 class="modal-title" style="text-align: center">Ajouter un EC</h4>
+              </div>
+              <!--modal Body-->
+              <form th:action="@{/ChefDepartement/ajouterEc/{id}(id=${ue.id})}" method="post">
+
+              <div class="modal-body" >
+
+                  <div class="form-group">
+                    <label >Code</label>
+                    <input type="text" class="form-control" name="code" />
+                  </div>
+                  <div class="form-group">
+                    <label >Libelle</label>
+                    <input type="text" class="form-control" name="libelle"/>
+                  </div>
+                  <div class="form-group">
+                    <label >CM</label>
+                    <input type="number" class="form-control" name="heure_CM"/>
+                  </div>
+                  <div class="form-group">
+                    <label >TP</label>
+                    <input type="number" class="form-control" name="heure_TP" />
+                  </div>
+                  <div class="form-group">
+                    <label >TD</label>
+                    <input type="number" class="form-control" name="heure_TD" />
+                  </div>
+                  <div class="form-group">
+                    <label >CM+TP/TD</label>
+                    <input type="number" class="form-control" name="heure_total" />
+                  </div>
+                  <div class="form-group">
+                    <label >TPE</label>
+                    <input type="number" class="form-control" name="TPE" />
+                  </div>
+                  <div class="form-group">
+                    <label >VHT</label>
+                    <input type="number" class="form-control" name="VHT" />
+                  </div>
+                  <div class="form-group">
+                    <label >Coefficient</label>
+                    <input type="number" class="form-control" name="coefficient" />
+                  </div>
+
+                </div>
+                <!--modal Footer-->
+                <div class="modal-footer" >
+                  <div class="row">
+                    <div class="col-lg-3  col-md-3 col-sm-3 col-xs-4">
+                      <button type="submit" class="btn btn-success">Ajouter</button>
+                    </div>
+                    <div class="col-lg-offset-5 col-lg-3 col-md-offset-5 col-md-3 col-sm-offset-5 col-sm-3 col-xs-8">
+                      <button type="submit" class="btn btn-default " data-dismiss="modal">Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Fin popup ajouter un Permanent -->
+
+      <!-- Debut lister tout les Permanents -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="table_Ec">
+          <thead>
+          <tr>
+            <th>Cde</th>
+            <th>Libelle</th>
+            <th>CM</th>
+            <th>TD</th>
+            <th>TP</th>
+            <th>CM+TD/TP</th>
+            <th>TPE</th>
+            <th>VHT</th>
+            <th>Coefficient</th>
+
+            <th>Operations</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="ec : ${ecs}">
+            <td th:text="${ec.code}"></td>
+            <td th:text="${ec.libelle}"></td>
+            <td th:text="${ec.heure_CM != null ? ec.heure_CM : 'N/A'}"></td>
+            <td th:text="${ec.heure_TD != null ? ec.heure_TD : 'N/A'}"></td>
+            <td th:text="${ec.heure_TP != null ? ec.heure_TP : 'N/A'}"></td>
+            <td th:text="${ec.heure_total != null ? ec.heure_total : 'N/A'}"></td>
+            <td th:text="${ec.TPE != null ? ec.TPE : 'N/A'}"></td>
+            <td th:text="${ec.VHT != null ? ec.VHT : 'N/A'}"></td>
+            <td th:text="${ec.coefficient != null ? ec.coefficient : 'N/A'}"></td>
+
+            <td>
+              <button class="btn btn-info btn-xs" data-toggle="modal" th:attr="data-target='#form_Modifier_Ec'+${ec.id}" >
+                Modifier
+              </button>
+              <button class="btn btn-danger btn-xs" data-toggle="modal" th:attr="data-target='#form_Supprimer_Ec'+${ec.id}" >
+                Supprimer
+              </button>
+            </td>
+
+
+            <!---Debut popup modifier un EC --->
+            <div data-dismiss="modal">
+              <div class="modal fade" th:attr="id='form_Modifier_Ec'+${ec.id}" >
+                <div class="modal-dialog" >
+                  <div class="modal-content panel-info" >
+                    <!--- modal Header //////////////////////////--->
+                    <div class="modal-header panel-heading" >
+                      <button type="button" class="close" data-dismiss="modal">x</button>
+                      <h4 class="modal-title" style="text-align: center">Modifier UE</h4>
+                    </div>
+                    <!--- modal Body //////////////////////--->
+                    <form th:action="@{/ChefDepartement/modifierEc/{id}(id=${ue.id})}" method="post">
+                      <div class="modal-body" >
+                        <div style="display: none">
+                          <input name="id" th:value="${ec.id}" />
+                        </div>
+                        <div class="form-group">
+                          <label >Code</label>
+                          <input type="text" class="form-control" name="code" th:value="${ec.code}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >Libelle</label>
+                          <input type="text" class="form-control" name="libelle" th:value="${ec.libelle}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >CM</label>
+                          <input type="number" class="form-control" name="heure_CM" th:value="${ec.heure_CM}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >TD</label>
+                          <input type="number" class="form-control" name="heure_TD" th:value="${ec.heure_TD}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >TP</label>
+                          <input type="number" class="form-control" name="heure_TP" th:value="${ec.heure_TP}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >CM+TD/TP</label>
+                          <input type="number" class="form-control" name="heure_total" th:value="${ec.heure_total}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >TPE</label>
+                          <input type="number" class="form-control" name="TPE" th:value="${ec.TPE}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >VHT</label>
+                          <input type="number" class="form-control" name="VHT" th:value="${ec.VHT}"/>
+                        </div>
+                        <div class="form-group">
+                          <label >Coefficient</label>
+                          <input type="number" class="form-control" name="coefficient" th:value="${ec.coefficient}"/>
+                        </div>
+
+                      </div>
+                      <!---  modal Footer ////////////////////--->
+                      <div class="modal-footer" >
+                        <div class="row">
+                          <div class="col-lg-3  col-md-3 col-sm-3 col-xs-4">
+                            <button type="submit" class="btn btn-info" >Modifier</button>
+                          </div>
+                          <div class="col-lg-offset-5 col-lg-3 col-md-offset-5 col-md-3 col-sm-offset-5 col-sm-3 col-xs-8">
+                            <button type="button" class="btn btn-default " data-dismiss="modal">Annuler</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Fin popup modifier un EC //////////////////////////// -->
+
+            <!-- Debut popup supprier un EC ///////////////////////////////////-->
+            <div data-dismiss="modal">
+              <div class="modal fade" th:attr="id='form_Supprimer_Ec'+${ec.id}">
+                <div class="modal-dialog" >
+                  <div class="modal-content panel-danger" >
+                    <!--modal Header-->
+                    <div class="modal-header panel-heading" >
+                      <button type="button" class="close" data-dismiss="modal">x</button>
+                      <h4 class="modal-title" style="text-align: center">Supprimer EC</h4>
+                    </div>
+                    <!--modal Body-->
+                    <form th:action="@{/ChefDepartement/supprimerEc/{id}(id=${ue.id})}" method="post">
+                      <div class="modal-body" >
+                        <div style="display: none">
+                          <input name="id" th:value="${ec.id}" />
+                        </div>
+                        <div class="form-group">
+                          <label >Code</label> :
+                          <span th:text="${ec.code}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >Libelle</label> :
+                          <span th:text="${ec.libelle}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >CM</label> :
+                          <span th:text="${ec.heure_CM}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >TD</label> :
+                          <span th:text="${ec.heure_TD}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >TP</label> :
+                          <span th:text="${ec.heure_TP}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >CM+TD/TP</label> :
+                          <span th:text="${ec.heure_total}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >TPE</label> :
+                          <span th:text="${ec.TPE}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >VHT</label> :
+                          <span th:text="${ec.VHT}"/> </span>
+                        </div>
+                        <div class="form-group">
+                          <label >Coefficient</label> :
+                          <span th:text="${ec.coefficient}"/> </span>
+                        </div>
+
+
+                      </div>
+                      <!--modal Footer-->
+                      <div class="modal-footer" >
+                        <div class="row">
+                          <div class="col-lg-3  col-md-3 col-sm-3 col-xs-4">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                          </div>
+                          <div class="col-lg-offset-5 col-lg-3 col-md-offset-5 col-md-3 col-sm-offset-5 col-sm-3 col-xs-8">
+                            <button type="button" class="btn btn-default " data-dismiss="modal">Annuler</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Fin popup supprier un EC ///////////////////////////////////////////////////////-->
+
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Fin lister tout les EC -->
+
+      <!-- Debut Datatable lister EC -->
+      <script>
+        $(document).ready(function() {
+          $("#table_Ec").DataTable({
+
+          });
+        })
+      </script>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
