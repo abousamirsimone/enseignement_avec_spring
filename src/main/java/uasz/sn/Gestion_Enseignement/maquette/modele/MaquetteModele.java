@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,10 +20,18 @@ public class MaquetteModele {
     private Long id;
     @Column(unique = true)
     private String nom;
-    @OneToMany(mappedBy = "maquette")
-    private Collection<UE> UEs;
-    @OneToOne(mappedBy = "maquette")
-    private Classe classe;
+    @ManyToMany
+    @JoinTable(
+            name = "maquette_ue",
+            joinColumns = @JoinColumn(name = "maquette_id"),
+            inverseJoinColumns = @JoinColumn(name = "ue_id")
+    )
+    private List<UE> ues = new ArrayList<>(); // NE DOIT PAS ÊTRE NULL
+
+    @ManyToOne
+    @JoinColumn(name = "formation_id")
+    private Formation formation;
+    private int semestre;
 
 
 }

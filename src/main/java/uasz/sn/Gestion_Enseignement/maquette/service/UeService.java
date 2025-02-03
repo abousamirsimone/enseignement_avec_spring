@@ -29,9 +29,16 @@ public class UeService {
     public UE findById(Long id) {
         return ueRepository.findById(id).get();
     }
+    public List<UE> findAllById(List<Long> id) {
+        return ueRepository.findAllById(id);
+    }
+
     public UE findOptionalById(Long id) {
         return ueRepository.findById(id).get();
     }
 
 
+    public void ajouterAll(List<UE> ues) {
+        ueRepository.saveAll(ues);
+    }
 }

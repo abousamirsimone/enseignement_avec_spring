@@ -21,9 +21,13 @@ public class UE {
     private String code;
     private int credits;
     private int coefficient;
-    @ManyToOne
-    private MaquetteModele maquette;
+    @ManyToMany(mappedBy = "ues")
+    private List<MaquetteModele> maquettes = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "ue", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EC> ecs = new ArrayList<>();
+
+
 
 }

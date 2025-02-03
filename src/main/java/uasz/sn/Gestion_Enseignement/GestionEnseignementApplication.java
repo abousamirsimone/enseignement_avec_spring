@@ -1,5 +1,8 @@
 package uasz.sn.Gestion_Enseignement;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +21,8 @@ import uasz.sn.Gestion_Enseignement.maquette.service.UeService;
 
 import java.util.Date;
 
+@SpringBootApplication(scanBasePackages = "uasz.sn.Gestion_Enseignement")
 
-@SpringBootApplication
 public class GestionEnseignementApplication implements CommandLineRunner {
 	@Autowired
 	private UtilisateurService utilisateurService;

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="template_maquette.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Maquette</title>
+</head>
+<body>
+<div layout:fragment="custom-contentMaq" class="container">
+
+    <!-- Onglets -->
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#tab_1ersemestre">1er Semestre</a></li>
+        <li><a data-toggle="tab" href="#tab_2emesemestre">2ème Semestre</a></li>
+    </ul>
+
+    <!-- Bouton Ajouter Formation -->
+    <div class="row" style="padding-bottom: 10px; padding-top: 10px">
+        <div style="text-align: center">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#form_Ajouter_UEM">Ajouter UES</button>
+        </div>
+    </div>
+
+    <!-- Contenu des onglets -->
+    <div class="tab-content">
+        <div id="tab_1ersemestre" class="tab-pane fade in active">
+            <!-- Modal Ajouter Formation -->
+            <div class="modal fade" id="form_Ajouter_UEM" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content panel-success">
+                        <div class="modal-header panel-heading">
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                            <h4 class="modal-title text-center">Ajouter une UE</h4>
+                        </div>
+                        <form th:action="@{/ChefDepartement/ajouterUEM/{id}(id=${formation.id})}" method="post">
+                            <div class="modal-body">
+                                <!-- Sélection de l'UE -->
+                                <div class="form-group">
+                                    <label for="ueIds">UE</label>
+                                    <select class="form-control" name="ueIds" id="ueIds" required>
+                                        <option value="" disabled selected>-- Sélectionnez une UE --</option>
+                                        <th:block th:if="${not #lists.isEmpty(ues)}">
+                                            <th:block th:each="ue : ${ues}">
+                                                <option th:value="${ue.id}" th:text="${ue.libelle}"></option>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${#lists.isEmpty(ues)}">
+                                            <option disabled>Aucune UE disponible</option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <!-- Ajout du champ "Semestre" -->
+                                <div class="form-group">
+                                    <label for="semestre">Semestre</label>
+                                    <select class="form-control" name="semestre" id="semestre" required>
+                                        <option value="1">1er Semestre</option>
+                                        <option value="2">2ème Semestre</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Boutons de validation -->
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Ajouter</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table des maquettes -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="table_1ersemestre">
+                    <thead>
+                    <tr>
+                        <th rowspan="2" class="text-center align-middle">UNITÉS D'ENSEIGNEMENT</th>
+                        <th rowspan="2">Crédits</th>
+                        <th rowspan="2">Coefficient</th>
+                        <th colspan="8">ÉLÉMENTS CONSTITUTIFS</th>
+                    </tr>
+                    <tr>
+                        <th>Intitulé</th>
+                        <th>CM</th>
+                        <th>TD</th>
+                        <th>TP</th>
+                        <th>CM+TD/TP</th>
+                        <th>TPE</th>
+                        <th>VHT</th>
+                        <th>Coefficient EC</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="ue : ${maquettes.ues}">
+                        <th:block th:if="${ue.maquettes != null && ue.maquettes.size() > 0}">
+                            <th:block th:each="maquette : ${ue.maquettes}">
+                                <th:block th:if="${maquette.semestre == 1}">
+                                    <tr>
+                                        <td th:text="${ue.libelle}" th:attr="rowspan=${#lists.size(ue.ecs) > 0 ? ue.ecs.size() : 1}"></td>
+                                        <td th:text="${ue.credits}" th:attr="rowspan=${#lists.size(ue.ecs) > 0 ? ue.ecs.size() : 1}"></td>
+                                        <td th:text="${ue.coefficient}" th:attr="rowspan=${#lists.size(ue.ecs) > 0 ? ue.ecs.size() : 1}"></td>
+
+                                        <th:block th:if="${#lists.size(ue.ecs) > 0}">
+                                            <td th:text="${ue.ecs[0].libelle}"></td>
+                                            <td th:text="${ue.ecs[0].heure_CM}"></td>
+                                            <td th:text="${ue.ecs[0].heure_TD}"></td>
+                                            <td th:text="${ue.ecs[0].heure_TP}"></td>
+                                            <td th:text="${ue.ecs[0].heure_total}"></td>
+                                            <td th:text="${ue.ecs[0].TPE}"></td>
+                                            <td th:text="${ue.ecs[0].VHT}"></td>
+                                            <td th:text="${ue.ecs[0].coefficient}"></td>
+                                        </th:block>
+
+                                        <th:block th:unless="${#lists.size(ue.ecs) > 0}">
+                                            <td colspan="8" class="text-center">Aucun élément constitutif</td>
+                                        </th:block>
+                                    </tr>
+
+                                    <!-- Boucle pour afficher les autres EC -->
+                                    <tr th:each="ec, iter : ${ue.ecs}" th:if="${iter.index > 0}">
+                                        <td th:text="${ec.libelle}"></td>
+                                        <td th:text="${ec.heure_CM}"></td>
+                                        <td th:text="${ec.heure_TD}"></td>
+                                        <td th:text="${ec.heure_TP}"></td>
+                                        <td th:text="${ec.heure_total}"></td>
+                                        <td th:text="${ec.TPE}"></td>
+                                        <td th:text="${ec.VHT}"></td>
+                                        <td th:text="${ec.coefficient}"></td>
+                                    </tr>
+                                </th:block>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Initialiser DataTable -->
+            <script>
+                $(document).ready(function() {
+                    $("#table_1ersemestre").DataTable();
+                });
+            </script>
+        </div>
+
+        <!-- 2ème Semestre -->
+        <div id="tab_2emesemestre" class="tab-pane fade">
+            <div class="row" style="padding-bottom: 10px; padding-top: 10px" >
+                <div style="text-align: center">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#form_Ajouter_UEM2">Ajouter UE</button>
+                </div>
+            </div>
+
+            <!-- Modal Ajouter Formation 2 -->
+            <div class="modal fade" id="form_Ajouter_UEM2" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content panel-success">
+                        <div class="modal-header panel-heading">
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                            <h4 class="modal-title text-center">Ajouter une UE</h4>
+                        </div>
+                        <form th:action="@{/ChefDepartement/ajouterUEM/{id}(id=${formation.id})}" method="post">
+                            <div class="modal-body">
+                                <!-- Sélection de l'UE -->
+                                <div class="form-group">
+                                    <label for="ueId">UE</label>
+                                    <select class="form-control" name="ueIds" id="ueId" required>
+                                        <option value="" disabled selected>-- Sélectionnez une UE --</option>
+                                        <th:block th:if="${not #lists.isEmpty(ues)}">
+                                            <th:block th:each="ue : ${ues}">
+                                                <option th:value="${ue.id}" th:text="${ue.libelle}"></option>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${#lists.isEmpty(ues)}">
+                                            <option disabled>Aucune UE disponible</option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="semestre2">Semestre</label>
+                                    <select class="form-control" name="semestre" id="semestre2" required>
+                                        <option value="2">2eme Semestre</option>
+                                        <option value="1">1er Semestre</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Boutons de validation -->
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Ajouter</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table des maquettes du 2ème semestre -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="table_2emesemestre">
+                    <thead>
+                    <tr>
+                        <th rowspan="2" class="text-center align-middle">UNITÉS D'ENSEIGNEMENT</th>
+                        <th rowspan="2">Crédits</th>
+                        <th rowspan="2">Coefficient</th>
+                        <th colspan="8">ÉLÉMENTS CONSTITUTIFS</th>
+                    </tr>
+                    <tr>
+                        <th>Intitulé</th>
+                        <th>CM</th>
+                        <th>TD</th>
+                        <th>TP</th>
+                        <th>CM+TD/TP</th>
+                        <th>TPE</th>
+                        <th>VHT</th>
+                        <th>Coefficient EC</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="ue : ${maquettes.ues}">
+                        <th:block th:if="${ue.maquettes != null && ue.maquettes.size() > 0}">
+                            <th:block th:each="maquette : ${ue.maquettes}">
+                                <th:block th:if="${maquette.semestre == 2}">
+                                    <tr>
+                                        <td th:text="${ue.libelle}" th:attr="rowspan=${#lists.size(ue.ecs) > 0 ? ue.ecs.size() : 1}"></td>
+                                        <td th:text="${ue.credits}" th:attr="rowspan=${#lists.size(ue.ecs) > 0 ? ue.ecs.size() : 1}"></td>
+                                        <td th:text="${ue.coefficient}" th:attr="rowspan=${#lists.size(ue.ecs) > 0 ? ue.ecs.size() : 1}"></td>
+
+                                        <th:block th:if="${#lists.size(ue.ecs) > 0}">
+                                            <td th:text="${ue.ecs[0].libelle}"></td>
+                                            <td th:text="${ue.ecs[0].heure_CM}"></td>
+                                            <td th:text="${ue.ecs[0].heure_TD}"></td>
+                                            <td th:text="${ue.ecs[0].heure_TP}"></td>
+                                            <td th:text="${ue.ecs[0].heure_total}"></td>
+                                            <td th:text="${ue.ecs[0].TPE}"></td>
+                                            <td th:text="${ue.ecs[0].VHT}"></td>
+                                            <td th:text="${ue.ecs[0].coefficient}"></td>
+                                        </th:block>
+
+                                        <th:block th:unless="${#lists.size(ue.ecs) > 0}">
+                                            <td colspan="8" class="text-center">Aucun élément constitutif</td>
+                                        </th:block>
+                                    </tr>
+
+                                    <!-- Boucle pour afficher les autres EC -->
+                                    <tr th:each="ec, iter : ${ue.ecs}" th:if="${iter.index > 0}">
+                                        <td th:text="${ec.libelle}"></td>
+                                        <td th:text="${ec.heure_CM}"></td>
+                                        <td th:text="${ec.heure_TD}"></td>
+                                        <td th:text="${ec.heure_TP}"></td>
+                                        <td th:text="${ec.heure_total}"></td>
+                                        <td th:text="${ec.TPE}"></td>
+                                        <td th:text="${ec.VHT}"></td>
+                                        <td th:text="${ec.coefficient}"></td>
+                                    </tr>
+                                </th:block>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Initialiser DataTable -->
+            <script>
+                $(document).ready(function() {
+                    $("#table_2emesemestre").DataTable();
+                });
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts nécessaires -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

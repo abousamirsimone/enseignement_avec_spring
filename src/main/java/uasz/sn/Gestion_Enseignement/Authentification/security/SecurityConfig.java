@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -32,6 +33,8 @@ public class SecurityConfig {
                                 .requestMatchers(FOR_PERMANENT).hasRole("Permanent")
                                 .requestMatchers(FOR_VACATAIRE).hasRole("Vacataire")
                                 .requestMatchers(FOR_CHEFDEPARTEMENT).hasRole("ChefDepartment")
+                                .requestMatchers("/api/**").permitAll()
+                                .requestMatchers("/apiDTO/**").permitAll()
 
                                 .anyRequest().authenticated()
                 )
@@ -43,7 +46,9 @@ public class SecurityConfig {
                                 .defaultSuccessUrl("/")
                                 .successForwardUrl("/")
                                 .permitAll()
-                );
+                )
+                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/api")))
+                .csrf(csrf->csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/api/**")));
 
         return http.build();
     }

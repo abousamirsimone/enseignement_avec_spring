@@ -36,7 +36,7 @@
                 <h4 class="modal-title" style="text-align: center">Ajouter un EC</h4>
               </div>
               <!--modal Body-->
-              <form th:action="@{/ChefDepartement/ajouterEc/{id}(id=${ue.id})}" method="post">
+              <form th:action="@{/ChefDepartement/ajouterEc/{idue}(idue=${ue.id})}" method="post">
 
               <div class="modal-body" >
 
@@ -102,7 +102,7 @@
           <thead>
           <tr>
             <th>Cde</th>
-            <th>Libelle</th>
+            <th rowspan="2">Libelle</th>
             <th>CM</th>
             <th>TD</th>
             <th>TP</th>
