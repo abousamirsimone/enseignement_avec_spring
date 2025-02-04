@@ -102,4 +102,14 @@ public class MaquetteController {
         return "redirect:/ChefDepartement/Formation/voirMaquette/" + id;
     }
 
+
+
+    @RequestMapping(value = "/ChefDepartement/archiverUEM", method = RequestMethod.POST)
+    public String archiver_Permanent(@RequestParam("id") Long idFormation, @RequestParam("idm") Long idm) {
+        maquetteService.archiver(idm);
+        return "redirect:/ChefDepartement/Formation/voirMaquette/" + idFormation;
+    }
+
+
+
 }

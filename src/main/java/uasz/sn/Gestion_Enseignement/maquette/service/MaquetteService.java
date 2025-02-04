@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uasz.sn.Gestion_Enseignement.Utilisateur.modele.Enseignant;
 import uasz.sn.Gestion_Enseignement.maquette.modele.Formation;
 import uasz.sn.Gestion_Enseignement.maquette.modele.MaquetteModele;
 import uasz.sn.Gestion_Enseignement.maquette.modele.UE;
@@ -19,6 +20,8 @@ public class MaquetteService {
     private MaquetteRepository maquetteRepository;
     @Autowired
     private UeRepository ueRepository;
+
+
 
     public void ajouter(Long id, Formation formation, List<UE> nouvellesUes, int semestre) {
         // Si l'ID est nul, cela signifie que nous devons créer une nouvelle maquette.
@@ -80,5 +83,17 @@ public class MaquetteService {
         return (MaquetteModele) maquetteRepository.findByFormationIdAndSemestre(formationId, semestre)
                 .orElse(null);
     }
+
+    public void archiver(Long id) {
+        maquetteRepository.findById(id).ifPresentOrElse(maquette -> {
+            maquette.setArchive(!maquette.isArchive());
+            maquetteRepository.save(maquette);
+        }, () -> {
+            throw new RuntimeException("Maquette introuvable avec l'ID : " + id);
+        });
+    }
+
+
+
 
 }

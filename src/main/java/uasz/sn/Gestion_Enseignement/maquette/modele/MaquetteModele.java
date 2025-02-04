@@ -32,6 +32,7 @@ public class MaquetteModele {
     @JoinColumn(name = "formation_id")
     private Formation formation;
     private int semestre;
+    private boolean archive;
 
 
 }
